@@ -1,0 +1,515 @@
+{
+	"info": {
+		"_postman_id": "api-platform-collection",
+		"name": "API Platform - Complete Collection",
+		"description": "Complete API collection for testing the API Hosting & Execution Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Signup - Developer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"    pm.environment.set(\"user_id\", jsonData.user.id);",
+									"    console.log(\"Token saved:\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"developer@example.com\",\n    \"password\": \"Password123!\",\n    \"name\": \"John Developer\",\n    \"role\": \"developer\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Create a new developer account"
+					},
+					"response": []
+				},
+				{
+					"name": "Signup - Consumer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"consumer_token\", jsonData.token);",
+									"    console.log(\"Consumer token saved\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"consumer@example.com\",\n    \"password\": \"Password123!\",\n    \"name\": \"Jane Consumer\",\n    \"role\": \"consumer\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Create a new consumer account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Developer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"    pm.environment.set(\"user_id\", jsonData.user.id);",
+									"    console.log(\"Token saved:\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"developer@example.com\",\n    \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login as developer"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current authenticated user details"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints - signup, login, get current user"
+		},
+		{
+			"name": "API Management",
+			"item": [
+				{
+					"name": "Create API - Python",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"api_id\", jsonData.id);",
+									"    console.log(\"API ID saved:\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"weather-api\",\n    \"description\": \"Simple weather API that returns temperature data\",\n    \"version\": \"v1\",\n    \"runtime\": \"python\",\n    \"visibility\": \"public\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis"
+							]
+						},
+						"description": "Create a new Python API"
+					},
+					"response": []
+				},
+				{
+					"name": "Create API - Node.js",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"user-api\",\n    \"description\": \"User management API with CRUD operations\",\n    \"version\": \"v1\",\n    \"runtime\": \"nodejs\",\n    \"visibility\": \"private\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis"
+							]
+						},
+						"description": "Create a new Node.js API"
+					},
+					"response": []
+				},
+				{
+					"name": "Create API - Paid",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"ai-sentiment-analysis\",\n    \"description\": \"AI-powered sentiment analysis API\",\n    \"version\": \"v1\",\n    \"runtime\": \"python\",\n    \"visibility\": \"paid\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis"
+							]
+						},
+						"description": "Create a paid API"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My APIs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis"
+							]
+						},
+						"description": "List all APIs created by current user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get API by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis/{{api_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis",
+								"{{api_id}}"
+							]
+						},
+						"description": "Get details of a specific API"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "code",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis/{{api_id}}/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis",
+								"{{api_id}}",
+								"upload"
+							]
+						},
+						"description": "Upload code file for an API (select a .py, .js, or .go file)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete API",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis/{{api_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis",
+								"{{api_id}}"
+							]
+						},
+						"description": "Delete an API"
+					},
+					"response": []
+				}
+			],
+			"description": "API management endpoints - create, list, view, upload, delete"
+		},
+		{
+			"name": "Marketplace",
+			"item": [
+				{
+					"name": "Get Public APIs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/marketplace/apis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"marketplace",
+								"apis"
+							]
+						},
+						"description": "Browse all public APIs (no authentication required)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Public API Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/marketplace/apis/{{api_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"marketplace",
+								"apis",
+								"{{api_id}}"
+							]
+						},
+						"description": "Get details of a public API (no authentication required)"
+					},
+					"response": []
+				}
+			],
+			"description": "Public marketplace endpoints - no authentication required"
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Health check endpoint to verify API Gateway is running"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "consumer_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "api_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
