@@ -63,6 +63,11 @@ func main() {
 	protected.HandleFunc("/apis/{id}", apiHandler.GetAPI).Methods("GET")
 	protected.HandleFunc("/apis/{id}", apiHandler.DeleteAPI).Methods("DELETE")
 	protected.HandleFunc("/apis/{id}/upload", apiHandler.UploadCode).Methods("POST")
+	
+	// Deployment routes
+	protected.HandleFunc("/apis/{id}/deploy", deployHandler.DeployAPI).Methods("POST")
+	protected.HandleFunc("/apis/{id}/stop", deployHandler.StopAPI).Methods("POST")
+	protected.HandleFunc("/apis/{id}/status", deployHandler.GetAPIStatus).Methods("GET")
 
 	// CORS configuration
 	c := cors.New(cors.Options{
