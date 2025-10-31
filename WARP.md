@@ -4,31 +4,63 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Commands
 
-- No build/lint/test tooling is configured yet (only `README.md` is present). Update this section once a stack is chosen and scripts are added (e.g., in `Makefile`, `package.json`, `pyproject.toml`, or CI).
+**Backend (Go):**
+```bash
+cd backend/api-gateway
+go run main.go              # Run API gateway
+go test ./...              # Run tests
+go build -o bin/gateway    # Build binary
+```
 
-## High-level architecture (from README intent)
+**Frontend (React/Next.js):**
+```bash
+cd frontend
+npm install                # Install dependencies
+npm run dev               # Development server
+npm run build             # Production build
+npm run lint              # Lint code
+```
 
-This repo is a platform to host, route, and execute APIs/functions with isolation, scalability, and observability. The big-picture components to expect as the code is implemented:
+## High-level architecture
 
-- Routing and Versioning
-  - HTTP/gRPC entrypoints, endpoint registry, versioned routes, health endpoint.
-- Execution Engine (pluggable runtimes)
-  - Abstraction to run user code in isolated contexts (process/container/VM/runtime); resource limits; timeouts; cold/warm start policy.
-- AuthN/Z, Rate Limiting, Quotas
-  - Project- and environment-scoped policies; tenant-aware tokens/keys; per-endpoint limits.
-- Async Jobs & Scheduling
-  - Queue integration for background/long-running executions; scheduled triggers; retries and DLQ.
-- Observability
-  - Structured logs, metrics, traces; request/execution correlation IDs; per-tenant dashboards.
-- Multi-tenancy & Secrets
-  - Projects, environments, and scoped secret management; audit trail.
-- Configuration & Persistence
-  - Backing stores for routing tables, executions, and policy state; config via files/env.
+A developer marketplace and API hosting platform with MENA-first positioning.
 
-## Repository structure (planned)
+**Tech Stack:**
+- **Backend:** Go (API gateway, billing, execution orchestration)
+- **Frontend:** React/Next.js (marketplace, dashboards)
+- **Data:** PostgreSQL (metadata, billing), Redis (caching, rate limiting)
+- **Execution:** Docker/Firecracker (sandboxed API containers)
+- **Queue:** NATS/RabbitMQ (async jobs, logs)
+- **Payments:** Stripe/PayTabs/Moyasar
 
-- `src/` — service code and modules (not created yet)
-- `docs/` — design docs and runbooks
+**Core Components:**
+
+1. **API Gateway** - Request routing, auth, rate limiting
+2. **Executor** - Container lifecycle, sandboxed execution
+3. **Billing Service** - Usage tracking, payments, developer payouts
+4. **Analytics Service** - Logs, metrics, dashboards
+5. **Marketplace Frontend** - Public API catalog, developer/consumer dashboards
+
+**MVP Focus (Phase 1):**
+- Code upload → containerized endpoint
+- Basic auth (API keys)
+- Request logging
+- Simple analytics dashboard
+
+## Repository structure
+
+```
+├── backend/
+│   ├── api-gateway/      # Main HTTP router, auth, rate limiting
+│   ├── executor/         # Container execution engine
+│   ├── billing/          # Usage tracking, payments, payouts
+│   ├── analytics/        # Metrics collection, logging
+│   └── shared/           # Common libs (DB, auth, config)
+├── frontend/             # Next.js marketplace + dashboards
+├── docs/                 # Architecture docs, API specs
+├── infrastructure/       # Docker, K8s, Terraform configs
+└── scripts/              # Dev setup, migrations
+```
 
 ## Notes for future updates
 
