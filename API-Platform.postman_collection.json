@@ -413,6 +413,84 @@
 						"description": "Delete an API"
 					},
 					"response": []
+				},
+				{
+					"name": "Deploy API",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis/{{api_id}}/deploy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis",
+								"{{api_id}}",
+								"deploy"
+							]
+						},
+						"description": "Deploy API to Docker container (pulls image, starts container)"
+					},
+					"response": []
+				},
+				{
+					"name": "Stop API",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis/{{api_id}}/stop",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis",
+								"{{api_id}}",
+								"stop"
+							]
+						},
+						"description": "Stop running API container"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deployment Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/apis/{{api_id}}/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"apis",
+								"{{api_id}}",
+								"status"
+							]
+						},
+						"description": "Check if API container is running"
+					},
+					"response": []
 				}
 			],
 			"description": "API management endpoints - create, list, view, upload, delete"
