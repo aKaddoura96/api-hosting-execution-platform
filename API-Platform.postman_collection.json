@@ -545,6 +545,72 @@
 			"description": "Public marketplace endpoints - no authentication required"
 		},
 		{
+			"name": "Analytics",
+			"item": [
+				{
+					"name": "Get API Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/stats/{{api_id}}?hours=24",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8082",
+							"path": ["stats", "{{api_id}}"],
+							"query": [{
+								"key": "hours",
+								"value": "24"
+							}]
+						},
+						"description": "Get API usage statistics for specified time period"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Execution History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/history/{{api_id}}?limit=100",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8082",
+							"path": ["history", "{{api_id}}"],
+							"query": [{
+								"key": "limit",
+								"value": "100"
+							}]
+						},
+						"description": "Get recent execution history for an API"
+					},
+					"response": []
+				},
+				{
+					"name": "Log Execution (Internal)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"api_id\": \"{{api_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"status_code\": 200,\n  \"duration_ms\": 45,\n  \"request_size\": 1024,\n  \"response_size\": 2048,\n  \"error\": \"\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8082/log",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8082",
+							"path": ["log"]
+						},
+						"description": "Log an API execution (used internally by other services)"
+					},
+					"response": []
+				}
+			],
+			"description": "Analytics endpoints for tracking API usage and performance"
+		},
+		{
 			"name": "Health Check",
 			"request": {
 				"method": "GET",
