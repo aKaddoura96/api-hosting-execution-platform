@@ -34,7 +34,7 @@ export default function APIDetailPage() {
 
   const loadAPI = async () => {
     try {
-      const data = await api.getAPI(apiId);
+      const data = await api.getAPI(apiId) as API;
       setApiData(data);
       
       // Set default test code based on runtime
