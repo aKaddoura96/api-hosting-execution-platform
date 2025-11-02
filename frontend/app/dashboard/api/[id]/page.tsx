@@ -102,19 +102,17 @@ export default function APIDetailPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navigation */}
       <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="text-blue-600 hover:text-blue-700">
-                ← Back to Dashboard
-              </Link>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex justify-between h-14 sm:h-16 items-center">
+            <Link href="/dashboard" className="text-blue-600 hover:text-blue-700 text-sm sm:text-base font-medium">
+              ← Back
+            </Link>
             <button
               onClick={() => {
                 localStorage.removeItem('token');
                 router.push('/login');
               }}
-              className="px-4 py-2 text-red-600 hover:text-red-700"
+              className="px-3 sm:px-4 py-2 text-sm sm:text-base text-red-600 hover:text-red-700 font-medium"
             >
               Logout
             </button>
@@ -122,14 +120,14 @@ export default function APIDetailPage() {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{apiData.name}</h1>
-              <p className="text-gray-600 mt-2">{apiData.description}</p>
-              <div className="flex items-center gap-4 mt-4">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{apiData.name}</h1>
+              <p className="text-sm sm:text-base text-gray-600 mt-2">{apiData.description}</p>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-4">
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
                   {apiData.runtime}
                 </span>
@@ -148,7 +146,7 @@ export default function APIDetailPage() {
             <button
               onClick={handleDeploy}
               disabled={deploying}
-              className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 font-medium transition-all shadow-md disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 font-medium transition-all shadow-md disabled:opacity-50"
             >
               {deploying ? 'Deploying...' : '🚀 Deploy'}
             </button>
@@ -156,8 +154,8 @@ export default function APIDetailPage() {
         </div>
 
         {/* Test Interface */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Test API</h2>
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Test API</h2>
           
           <div className="space-y-4">
             <div>

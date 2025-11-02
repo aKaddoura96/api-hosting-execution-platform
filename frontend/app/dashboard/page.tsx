@@ -58,19 +58,24 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b px-6 py-4">
+      <nav className="bg-white border-b px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold">
-            API Platform
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">AP</span>
+            </div>
+            <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              API Platform
+            </span>
           </Link>
-          <div className="flex items-center space-x-4">
-            <Link href="/marketplace" className="text-gray-600 hover:text-gray-900">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <Link href="/marketplace" className="hidden sm:inline text-gray-600 hover:text-gray-900">
               Marketplace
             </Link>
-            <span className="text-gray-600">{user?.name}</span>
+            <span className="hidden md:inline text-gray-600 text-sm">Hi, {user?.name}</span>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900"
+              className="px-3 sm:px-4 py-2 text-sm sm:text-base text-red-600 hover:text-red-700 font-medium"
             >
               Logout
             </button>
@@ -78,32 +83,33 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">My APIs</h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold">My APIs</h1>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 font-medium transition-all shadow-md hover:shadow-lg"
           >
             + Create API
           </button>
         </div>
 
         {apis.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border">
+          <div className="text-center py-12 bg-white rounded-lg border mx-4 sm:mx-0">
+            <div className="text-5xl mb-4">🚀</div>
             <h3 className="text-xl font-semibold mb-2">No APIs yet</h3>
-            <p className="text-gray-600 mb-4">Create your first API to get started</p>
+            <p className="text-gray-600 mb-4 px-4">Create your first API to get started</p>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 font-medium shadow-md"
             >
               Create Your First API
             </button>
           </div>
         ) : (
-          <div className="grid gap-6">
+          <div className="grid gap-4 sm:gap-6">
             {apis.map((apiItem) => (
-              <div key={apiItem.id} className="bg-white p-6 rounded-lg border">
+              <div key={apiItem.id} className="bg-white p-4 sm:p-6 rounded-lg border hover:shadow-lg transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-semibold">{apiItem.name}</h3>
