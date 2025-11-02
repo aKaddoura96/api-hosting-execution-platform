@@ -11,6 +11,7 @@ import (
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/repository"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -87,7 +88,15 @@ func main() {
 
 	router.Use(logger.HTTPLoggingMiddleware(log))
 
-	if err := http.ListenAndServe(":"+port, router); err != nil {
+	// CORS configuration
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	})
+
+	if err := http.ListenAndServe(":"+port, c.Handler(router)); err != nil {
 		log.Fatal("Server failed", map[string]interface{}{"error": err.Error()})
 	}
 }
