@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.22-alpine AS builder
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN go mod download
 COPY executor/ .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o executor -mod=mod main_simple.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o executor -mod=mod main.go
 
 # Final stage
 FROM alpine:latest

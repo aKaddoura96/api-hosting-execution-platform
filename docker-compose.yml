@@ -66,6 +66,8 @@ services:
     environment:
       PORT: 8081
       DATABASE_URL: postgres://apiplatform:dev_password@postgres:5432/apiplatform?sslmode=disable
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Mount Docker socket for container execution
     depends_on:
       postgres:
         condition: service_healthy
