@@ -109,14 +109,26 @@ export default function DashboardPage() {
         ) : (
           <div className="grid gap-4 sm:gap-6">
             {apis.map((apiItem) => (
-              <div key={apiItem.id} className="bg-white p-4 sm:p-6 rounded-lg border hover:shadow-lg transition-shadow">
+              <Link
+                key={apiItem.id}
+                href={`/dashboard/api/${apiItem.id}`}
+                className="block bg-white p-4 sm:p-6 rounded-lg border-2 border-gray-200 hover:shadow-xl transition-all hover:border-blue-500 hover:scale-[1.01] cursor-pointer group"
+              >
                 <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold">{apiItem.name}</h3>
-                    <p className="text-gray-600">{apiItem.description}</p>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold group-hover:text-blue-600 transition-colors">
+                      {apiItem.name}
+                    </h3>
+                    <p className="text-gray-600 mt-1">{apiItem.description || 'No description'}</p>
+                    {apiItem.status === 'pending' && (
+                      <p className="text-xs text-yellow-600 mt-2 flex items-center gap-1">
+                        <span>⚠️</span>
+                        <span>Upload code to activate this API</span>
+                      </p>
+                    )}
                   </div>
                   <span
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ml-4 ${
                       apiItem.status === 'deployed'
                         ? 'bg-green-100 text-green-800'
                         : apiItem.status === 'pending'
@@ -127,19 +139,28 @@ export default function DashboardPage() {
                     {apiItem.status}
                   </span>
                 </div>
-                <div className="flex space-x-4 text-sm text-gray-600">
-                  <span>Runtime: {apiItem.runtime}</span>
-                  <span>•</span>
-                  <span>Version: {apiItem.version}</span>
-                  <span>•</span>
-                  <span>Visibility: {apiItem.visibility}</span>
+                <div className="flex flex-wrap gap-2 sm:gap-4 text-sm text-gray-600 mb-3">
+                  <span className="flex items-center gap-1">
+                    <span className="font-medium">Runtime:</span> {apiItem.runtime}
+                  </span>
+                  <span className="hidden sm:inline text-gray-400">•</span>
+                  <span className="flex items-center gap-1">
+                    <span className="font-medium">Version:</span> {apiItem.version}
+                  </span>
+                  <span className="hidden sm:inline text-gray-400">•</span>
+                  <span className="flex items-center gap-1">
+                    <span className="font-medium">Visibility:</span> {apiItem.visibility}
+                  </span>
                 </div>
-                <div className="mt-4">
-                  <code className="text-sm bg-gray-100 px-3 py-1 rounded">
+                <div className="flex justify-between items-center">
+                  <code className="text-xs sm:text-sm bg-gray-100 px-3 py-1.5 rounded break-all text-gray-700">
                     {apiItem.endpoint}
                   </code>
+                  <span className="ml-4 text-blue-600 font-medium text-sm whitespace-nowrap group-hover:translate-x-1 transition-transform">
+                    Open →
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

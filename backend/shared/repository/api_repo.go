@@ -137,6 +137,16 @@ func (r *APIRepository) UpdateCodePath(id, codePath string) error {
 	return err
 }
 
+func (r *APIRepository) Update(api *models.API) error {
+	query := `
+		UPDATE apis 
+		SET name = $1, description = $2, visibility = $3, endpoint = $4, updated_at = CURRENT_TIMESTAMP
+		WHERE id = $5
+	`
+	_, err := r.db.Exec(query, api.Name, api.Description, api.Visibility, api.Endpoint, api.ID)
+	return err
+}
+
 func (r *APIRepository) Delete(id string) error {
 	query := `DELETE FROM apis WHERE id = $1`
 	_, err := r.db.Exec(query, id)

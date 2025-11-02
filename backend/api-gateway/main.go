@@ -83,6 +83,7 @@ func main() {
 	protected.HandleFunc("/apis", apiHandler.GetMyAPIs).Methods("GET")
 	protected.HandleFunc("/apis", apiHandler.CreateAPI).Methods("POST")
 	protected.HandleFunc("/apis/{id}", apiHandler.GetAPI).Methods("GET")
+	protected.HandleFunc("/apis/{id}", apiHandler.UpdateAPI).Methods("PUT")
 	protected.HandleFunc("/apis/{id}", apiHandler.DeleteAPI).Methods("DELETE")
 	protected.HandleFunc("/apis/{id}/upload", apiHandler.UploadCode).Methods("POST")
 	

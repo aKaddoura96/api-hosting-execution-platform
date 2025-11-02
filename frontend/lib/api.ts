@@ -97,9 +97,28 @@ class APIClient {
     return response.json();
   }
 
+  async updateAPI(id: string, data: { name?: string; description?: string; visibility?: string }) {
+    return this.request(`/api/v1/apis/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
   async deleteAPI(id: string) {
     return this.request(`/api/v1/apis/${id}`, {
       method: 'DELETE',
+    });
+  }
+
+  async deployAPI(id: string) {
+    return this.request(`/api/v1/apis/${id}/deploy`, {
+      method: 'POST',
+    });
+  }
+
+  async stopAPI(id: string) {
+    return this.request(`/api/v1/apis/${id}/stop`, {
+      method: 'POST',
     });
   }
 }

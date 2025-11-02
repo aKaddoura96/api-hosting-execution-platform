@@ -88,8 +88,22 @@ func (h *DeployHandler) DeployAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Update API status to deployed
+	if err := h.apiRepo.UpdateStatus(apiID, "deployed", deployResp.ContainerID); err != nil {
+		// Log error but don't fail the request
+		fmt.Printf("Warning: Failed to update API status: %v\n", err)
+	}
+
+	// Get updated API data
+	updatedAPI, _ := h.apiRepo.GetByID(apiID)
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(deployResp)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message":      deployResp.Message,
+		"status":       deployResp.Status,
+		"container_id": deployResp.ContainerID,
+		"api":          updatedAPI,
+	})
 }
 
 func (h *DeployHandler) StopAPI(w http.ResponseWriter, r *http.Request) {
@@ -133,8 +147,20 @@ func (h *DeployHandler) StopAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Update API status to stopped
+	if err := h.apiRepo.UpdateStatus(apiID, "stopped", ""); err != nil {
+		fmt.Printf("Warning: Failed to update API status: %v\n", err)
+	}
+
+	// Get updated API data
+	updatedAPI, _ := h.apiRepo.GetByID(apiID)
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(stopResp)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": stopResp.Message,
+		"status":  stopResp.Status,
+		"api":     updatedAPI,
+	})
 }
 
 func (h *DeployHandler) GetAPIStatus(w http.ResponseWriter, r *http.Request) {

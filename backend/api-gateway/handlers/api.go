@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/models"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/repository"
@@ -207,4 +208,58 @@ func (h *APIHandler) DeleteAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *APIHandler) UpdateAPI(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	apiID := vars["id"]
+	userID := r.Context().Value("user_id").(string)
+
+	// Get API
+	api, err := h.apiRepo.GetByID(apiID)
+	if err != nil {
+		http.Error(w, "API not found", http.StatusNotFound)
+		return
+	}
+
+	// Check ownership
+	if api.UserID != userID {
+		http.Error(w, "Unauthorized", http.StatusForbidden)
+		return
+	}
+
+	var req struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Visibility  string `json:"visibility"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Validate
+	if req.Name != "" {
+		api.Name = req.Name
+	}
+	if req.Description != "" {
+		api.Description = req.Description
+	}
+	if req.Visibility != "" && (req.Visibility == "private" || req.Visibility == "public" || req.Visibility == "paid") {
+		api.Visibility = req.Visibility
+	}
+
+	// Update endpoint if name changed
+	if req.Name != "" {
+		api.Endpoint = fmt.Sprintf("/execute/%s/%s", strings.ToLower(api.UserID[:8]), strings.ToLower(api.Name))
+	}
+
+	if err := h.apiRepo.Update(api); err != nil {
+		http.Error(w, "Failed to update API", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api)
 }
