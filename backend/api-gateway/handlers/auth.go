@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/auth"
+	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/logger"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/models"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/repository"
 )
@@ -35,8 +36,11 @@ type AuthResponse struct {
 }
 
 func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
+	log := logger.NewLogger("auth-handler")
+	
 	var req SignupRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Warn("Invalid signup request body", map[string]interface{}{"error": err.Error()})
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
@@ -72,9 +76,12 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.userRepo.Create(user); err != nil {
+		log.Error("Failed to create user", map[string]interface{}{"email": req.Email, "error": err.Error()})
 		http.Error(w, "Failed to create user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	
+	log.Info("User created successfully", map[string]interface{}{"user_id": user.ID, "email": user.Email, "role": user.Role})
 
 	// Generate JWT token
 	token, err := auth.GenerateToken(user.ID, user.Email, user.Role)
@@ -92,8 +99,11 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+	log := logger.NewLogger("auth-handler")
+	
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Warn("Invalid login request body", map[string]interface{}{"error": err.Error()})
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
@@ -101,15 +111,19 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	// Get user by email
 	user, err := h.userRepo.GetByEmail(req.Email)
 	if err != nil {
+		log.Warn("Login attempt with invalid email", map[string]interface{}{"email": req.Email})
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
 
 	// Check password
 	if !models.CheckPassword(req.Password, user.PasswordHash) {
+		log.Warn("Login attempt with invalid password", map[string]interface{}{"user_id": user.ID, "email": user.Email})
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
+	
+	log.Info("User logged in successfully", map[string]interface{}{"user_id": user.ID, "email": user.Email})
 
 	// Generate JWT token
 	token, err := auth.GenerateToken(user.ID, user.Email, user.Role)

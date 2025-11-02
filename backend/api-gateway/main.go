@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -10,6 +9,7 @@ import (
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/api-gateway/handlers"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/api-gateway/middleware"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/database"
+	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/logger"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/repository"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -23,25 +23,43 @@ type HealthResponse struct {
 }
 
 func main() {
+	// Initialize logger
+	log := logger.NewLogger("api-gateway")
+	logger.SetDefaultLogger(log)
+
 	// Load environment variables
 	godotenv.Load()
+	log.Info("Starting API Gateway", map[string]interface{}{
+		"version": "1.0.0",
+	})
 
 	// Connect to database
+	log.Info("Connecting to database...")
 	if err := database.Connect(); err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatal("Failed to connect to database", map[string]interface{}{
+			"error": err.Error(),
+		})
 	}
 	defer database.Close()
+	log.Info("Database connected successfully")
 
 	// Initialize repositories
+	log.Info("Initializing repositories")
 	userRepo := repository.NewUserRepository(database.DB)
 	apiRepo := repository.NewAPIRepository(database.DB)
 
 	// Initialize handlers
+	log.Info("Initializing handlers")
 	authHandler := handlers.NewAuthHandler(userRepo)
 	apiHandler := handlers.NewAPIHandler(apiRepo)
+	deployHandler := handlers.NewDeployHandler(apiRepo)
 
 	// Setup router
+	log.Info("Setting up routes")
 	router := mux.NewRouter()
+
+	// Add logging middleware
+	router.Use(logger.HTTPLoggingMiddleware(log))
 
 	// Public routes
 	router.HandleFunc("/health", healthHandler).Methods("GET")
@@ -82,8 +100,16 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("API Gateway starting on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, c.Handler(router)))
+	log.Info("API Gateway ready", map[string]interface{}{
+		"port": port,
+		"address": "http://localhost:" + port,
+	})
+	
+	if err := http.ListenAndServe(":"+port, c.Handler(router)); err != nil {
+		log.Fatal("Server failed", map[string]interface{}{
+			"error": err.Error(),
+		})
+	}
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,139 +1,129 @@
-# API Hosting & Execution Platform
+# API Hosting & Execution Platform 🚀
 
-A developer-first API marketplace and hosting platform where developers can host REST APIs or scripts (serverless-style), manage versions, and optionally sell access — with built-in billing, authentication, and analytics.
+A MENA-first platform where developers can host REST APIs or scripts serverless-style, manage versions, and optionally sell access — with built-in billing, authentication, and analytics.
 
-## Vision
+## 🎯 Vision
 
-**Three core value propositions:**
-1. **Developers** get fast API hosting (like Vercel or Render)
-2. **Consumers** get a marketplace of ready-to-use APIs (like RapidAPI, but simpler and regionally hosted)
-3. **Platform** monetizes via usage fees, subscriptions, or transaction cuts
+Enable developers to:
+- **Host APIs**: Deploy Python, Node.js, or Go code as containerized APIs
+- **Monetize**: Sell API access with built-in billing and subscription management
+- **Track Usage**: Real-time analytics and execution metrics
+- **Scale**: Serverless-style automatic scaling and resource management
 
-## Core Features
+## ✨ Features
 
-### 1. API Hosting & Execution
-- Developers upload code (Python, Go, JS)
-- System deploys as sandboxed container with auto-generated endpoint
-- Each endpoint has:
-  - `public_url` → accessible with API key/token
-  - `private_url` → developer-only for internal/staging
-  - Versioning (v1, v2, etc.)
-  - Built-in request logging and analytics
+### Currently Available ✅
+- ✅ User authentication & authorization (JWT)
+- ✅ API creation & management
+- ✅ Code upload & storage
+- ✅ Container deployment (Python/Node/Go runtimes)
+- ✅ Deployment status tracking
+- ✅ Public marketplace
+- ✅ Analytics infrastructure
+- ✅ RESTful API Gateway
 
-### 2. Access Control
-- **Public (Free)**: Anyone with API key can use
-- **Private**: Developer or invited users only
-- **Paid**: Subscription or per-call payment
+### Coming Soon 🚧
+- Request proxying to deployed containers
+- Usage-based billing & payments
+- Consumer dashboard
+- Rate limiting & quotas
 
-### 3. Monetization Layer
-- Usage-based billing: $0.01 per request or per minute
-- Subscription model: $10/month for unlimited access
-- Revenue split: Platform keeps 10-15% of sales
-- MENA-friendly payment integration (Stripe/PayTabs/Moyasar/Network International)
-
-### 4. Analytics & Dashboard
-**Developer Dashboard:**
-- Request counts, latency, error rates
-- Earnings dashboard
-- API keys management
-- Logs and request samples
-
-**Consumer Dashboard:**
-- Usage statistics per API
-- Billing and payment history
-
-### 5. API Marketplace
-- Public catalog with tags, docs, and pricing
-- Categories: AI, NLP, finance, weather, etc.
-- Swagger/OpenAPI documentation integration
-
-## Tech Stack
-
-**Frontend:**
-- React (Next.js) — developer dashboards & public API marketplace
-- Stripe/PayTabs integration for billing UI
-
-**Backend:**
-- Go (Golang) — orchestration, API gateway, billing logic
-- PostgreSQL — user data, API metadata, billing, analytics
-- Redis — caching + rate limiting
-- Docker/Firecracker/gVisor — secure sandbox execution
-- NATS or RabbitMQ — async job execution / logs streaming
-
-**Hosting:**
-- Kubernetes on AWS Dubai, G42 Cloud, or Azure UAE Central
-- S3-compatible object storage for logs and code packages
-
-## Execution Flow
-
-1. Developer uploads script/API → validated → packaged into container → deployed
-2. Platform assigns unique URL: `api.runspace.io/user/api-name/v1`
-3. Request → API Gateway → routed to container → response
-4. Request metadata stored (latency, usage)
-5. Billing microservice calculates charges
-6. Developer earnings credited, platform fee subtracted
-
-## Differentiation
-
-- **Arabic-first localization** — docs, billing, dashboard
-- **UAE-hosted** — legal data residency compliance (banks/gov)
-- **LLM/AI-focused** — host ML inference endpoints
-- **Webhooks & automation** — integrate multiple APIs (Zapier-like layer)
-
-## MVP Roadmap
-
-### Phase 1 – Core API Hosting
-- [ ] Users upload code → gets REST endpoint
-- [ ] Sandbox execution environment (Docker)
-- [ ] Logs and analytics
-
-### Phase 2 – Public/Private Access
-- [ ] Auth system (JWT + API keys)
-- [ ] Endpoint visibility toggle (public/private)
-
-### Phase 3 – Billing & Marketplace
-- [ ] Stripe/PayTabs integration
-- [ ] Marketplace UI for browsing APIs
-- [ ] Usage metering & developer payouts
-
-### Phase 4 – Scaling & Multi-language Support
-- [ ] Add Go, Node.js, Python runtimes
-- [ ] Auto-scaling API containers
-- [ ] Webhooks, cron jobs, long-running tasks
-
-## Repository Structure
+## 🏗️ Architecture
 
 ```
-├── backend/          # Go backend services
-│   ├── api-gateway/  # Request routing & auth
-│   ├── executor/     # Container execution engine
-│   ├── billing/      # Usage tracking & payments
-│   └── analytics/    # Metrics & logging
-├── frontend/         # React/Next.js dashboard
-├── docs/            # Design docs and runbooks
-└── infrastructure/  # K8s configs, Dockerfiles
+┌─────────────────────────────────────────────────────┐
+│                    Frontend                          │
+│              (Next.js 14 + React)                   │
+└────────────────────┬────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────┐
+│               API Gateway (Go)                       │
+│          Port 8080 - HTTP/REST                      │
+│    Auth • API Management • Deployment               │
+└──┬──────────┬──────────┬─────────────┬─────────────┘
+   │          │          │             │
+┌──▼────┐ ┌──▼─────┐ ┌─▼────────┐ ┌──▼──────────┐
+│Executor│ │Analytics│ │PostgreSQL│ │   Redis     │
+│(Go)    │ │  (Go)   │ │          │ │             │
+│8081    │ │  8082   │ │   5432   │ │    6379     │
+└────────┘ └─────────┘ └──────────┘ └─────────────┘
 ```
 
-## Getting Started
+## 🚀 Quick Start
 
-**Prerequisites:**
-- Go 1.21+
-- Node.js 18+
-- Docker
-- PostgreSQL
-- Redis
+### Prerequisites
+- **Docker Desktop** (that's it!)
 
-**Development:**
+### Start Everything with Docker
+
+```powershell
+# One command to start everything!
+.\docker-start.ps1
+
+# Or use docker-compose directly
+docker-compose up --build
+
+# Stop all services
+docker-compose down
+```
+
+### Development Mode (Without Docker)
+
+```powershell
+# If you want to run services locally for development
+.\scripts\start.ps1
+
+# Stop all services
+.\scripts\stop.ps1
+```
+
+### Access the Platform
+- **Frontend**: http://localhost:3000
+- **API Gateway**: http://localhost:8080
+- **API Docs**: See POSTMAN_TESTING_GUIDE.md
+
+## 📚 Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Setup & first API
+- **[Architecture](./ARCHITECTURE.md)** - System design
+- **[Development](./DEVELOPMENT.md)** - Contributing guide
+- **[Deployment](./DEPLOYMENT_GUIDE.md)** - Production deployment
+- **[API Testing](./POSTMAN_TESTING_GUIDE.md)** - Postman guide
+
+## 🧪 Quick Test
+
 ```bash
-# Backend
-cd backend/api-gateway
-go run main.go
+# 1. Signup
+curl -X POST http://localhost:8080/api/v1/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"dev@example.com","password":"pass123","name":"Dev","role":"developer"}'
 
-# Frontend
-cd frontend
-npm install
-npm run dev
+# 2. Login (save token)
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"dev@example.com","password":"pass123"}'
+
+# 3. Create API
+curl -X POST http://localhost:8080/api/v1/apis \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"my-api","description":"Test","runtime":"python","visibility":"public"}'
 ```
+
+## 📊 Tech Stack
+
+**Backend**: Go, PostgreSQL, Redis, Docker  
+**Frontend**: Next.js 14, React, Tailwind CSS  
+**DevOps**: Docker Compose
+
+## 🤝 Contributing
+
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for setup and contribution guidelines.
+
+## 📝 License
+
+MIT License
 
 ---
-Project initiated: 2025-10-31
+
+**Built with ❤️ for the MENA developer community**

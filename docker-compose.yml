@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
+    container_name: api-platform-postgres
     environment:
       POSTGRES_USER: apiplatform
       POSTGRES_PASSWORD: dev_password
@@ -11,13 +10,104 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - api-platform
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apiplatform"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7
+    container_name: api-platform-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - api-platform
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-gateway:
+    build:
+      context: ./backend
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-platform-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgres://apiplatform:dev_password@postgres:5432/apiplatform?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-secret-key-change-in-production
+      EXECUTOR_URL: http://executor:8081
+      ANALYTICS_URL: http://analytics:8082
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - api-platform
+    restart: unless-stopped
+
+  executor:
+    build:
+      context: ./backend
+      dockerfile: executor/Dockerfile
+    container_name: api-platform-executor
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: 8081
+      DATABASE_URL: postgres://apiplatform:dev_password@postgres:5432/apiplatform?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - api-platform
+    restart: unless-stopped
+
+  analytics:
+    build:
+      context: ./backend
+      dockerfile: analytics/Dockerfile
+    container_name: api-platform-analytics
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      DATABASE_URL: postgres://apiplatform:dev_password@postgres:5432/apiplatform?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - api-platform
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: api-platform-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - api-platform
+    restart: unless-stopped
+
+networks:
+  api-platform:
+    driver: bridge
 
 volumes:
   postgres_data:

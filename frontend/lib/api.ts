@@ -8,10 +8,11 @@ class APIClient {
 
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
-    const headers = {
+    const authHeader = this.getAuthHeader();
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...this.getAuthHeader(),
-      ...options.headers,
+      ...(authHeader.Authorization ? { Authorization: authHeader.Authorization } : {}),
+      ...(options.headers as Record<string, string> || {}),
     };
 
     const response = await fetch(url, { ...options, headers });
@@ -78,7 +79,10 @@ class APIClient {
     formData.append('code', file);
 
     const token = localStorage.getItem('token');
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     const response = await fetch(`${API_BASE_URL}/api/v1/apis/${apiId}/upload`, {
       method: 'POST',

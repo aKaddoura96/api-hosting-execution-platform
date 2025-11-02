@@ -36,7 +36,7 @@ func (r *APIRepository) GetByID(id string) (*models.API, error) {
 	
 	query := `
 		SELECT id, user_id, name, description, version, runtime, visibility, status,
-		       endpoint, code_path, container_id, created_at, updated_at
+		       endpoint, COALESCE(code_path, ''), COALESCE(container_id, ''), created_at, updated_at
 		FROM apis WHERE id = $1
 	`
 	
@@ -56,7 +56,7 @@ func (r *APIRepository) GetByID(id string) (*models.API, error) {
 func (r *APIRepository) GetByUserID(userID string) ([]*models.API, error) {
 	query := `
 		SELECT id, user_id, name, description, version, runtime, visibility, status,
-		       endpoint, code_path, container_id, created_at, updated_at
+		       endpoint, COALESCE(code_path, ''), COALESCE(container_id, ''), created_at, updated_at
 		FROM apis WHERE user_id = $1
 		ORDER BY created_at DESC
 	`
@@ -87,7 +87,7 @@ func (r *APIRepository) GetByUserID(userID string) ([]*models.API, error) {
 func (r *APIRepository) GetPublicAPIs() ([]*models.API, error) {
 	query := `
 		SELECT id, user_id, name, description, version, runtime, visibility, status,
-		       endpoint, code_path, container_id, created_at, updated_at
+		       endpoint, COALESCE(code_path, ''), COALESCE(container_id, ''), created_at, updated_at
 		FROM apis WHERE visibility = 'public' AND status = 'deployed'
 		ORDER BY created_at DESC
 	`
@@ -118,11 +118,22 @@ func (r *APIRepository) GetPublicAPIs() ([]*models.API, error) {
 func (r *APIRepository) UpdateStatus(id, status, containerID string) error {
 	query := `
 		UPDATE apis 
-		SET status = $1, container_id = $2, updated_at = CURRENT_TIMESTAMP
+		SET status = $1, container_id = NULLIF($2, ''), updated_at = CURRENT_TIMESTAMP
 		WHERE id = $3
 	`
 	
 	_, err := r.db.Exec(query, status, containerID, id)
+	return err
+}
+
+func (r *APIRepository) UpdateCodePath(id, codePath string) error {
+	query := `
+		UPDATE apis 
+		SET code_path = $1, updated_at = CURRENT_TIMESTAMP
+		WHERE id = $2
+	`
+	
+	_, err := r.db.Exec(query, codePath, id)
 	return err
 }
 

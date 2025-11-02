@@ -2,13 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/database"
+	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/logger"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/models"
 	"github.com/aKaddoura96/api-hosting-execution-platform/backend/shared/repository"
 	"github.com/gorilla/mux"
@@ -16,13 +16,22 @@ import (
 )
 
 func main() {
+	// Initialize logger
+	log := logger.NewLogger("analytics")
+	logger.SetDefaultLogger(log)
+	
 	godotenv.Load()
+	log.Info("Starting Analytics Service", map[string]interface{}{
+		"version": "1.0.0",
+	})
 
 	// Connect to database
+	log.Info("Connecting to database...")
 	if err := database.Connect(); err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatal("Failed to connect to database", map[string]interface{}{"error": err.Error()})
 	}
 	defer database.Close()
+	log.Info("Database connected successfully")
 
 	// Initialize repositories
 	execRepo := repository.NewExecutionRepository(database.DB)
@@ -59,8 +68,16 @@ func main() {
 		port = "8082"
 	}
 
-	log.Printf("Analytics service starting on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Info("Analytics service ready", map[string]interface{}{
+		"port": port,
+		"address": "http://localhost:" + port,
+	})
+	
+	router.Use(logger.HTTPLoggingMiddleware(log))
+	
+	if err := http.ListenAndServe(":"+port, router); err != nil {
+		log.Fatal("Server failed", map[string]interface{}{"error": err.Error()})
+	}
 }
 
 type LogExecutionRequest struct {
@@ -91,7 +108,7 @@ func handleLogExecution(w http.ResponseWriter, r *http.Request, execRepo *reposi
 	}
 
 	if err := execRepo.Create(execution); err != nil {
-		log.Printf("Failed to log execution: %v", err)
+		logger.Error("Failed to log execution", map[string]interface{}{"error": err.Error()})
 		http.Error(w, "Failed to log execution", http.StatusInternalServerError)
 		return
 	}
@@ -125,7 +142,7 @@ func handleGetStats(w http.ResponseWriter, r *http.Request, execRepo *repository
 	since := time.Now().Add(-time.Duration(hours) * time.Hour)
 	stats, err := execRepo.GetStats(apiID, since)
 	if err != nil {
-		log.Printf("Failed to get stats: %v", err)
+		logger.Error("Failed to get stats", map[string]interface{}{"error": err.Error()})
 		http.Error(w, "Failed to get stats", http.StatusInternalServerError)
 		return
 	}
@@ -158,7 +175,7 @@ func handleGetHistory(w http.ResponseWriter, r *http.Request, execRepo *reposito
 
 	executions, err := execRepo.GetByAPIID(apiID, limit)
 	if err != nil {
-		log.Printf("Failed to get execution history: %v", err)
+		logger.Error("Failed to get execution history", map[string]interface{}{"error": err.Error()})
 		http.Error(w, "Failed to get execution history", http.StatusInternalServerError)
 		return
 	}

@@ -129,8 +129,11 @@ func (h *APIHandler) UploadCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update API record (code path will be updated, deployment happens separately)
-	// TODO: Trigger deployment via executor service
+	// Update API record with code path
+	if err := h.apiRepo.UpdateCodePath(apiID, codePath); err != nil {
+		http.Error(w, "Failed to update code path", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
