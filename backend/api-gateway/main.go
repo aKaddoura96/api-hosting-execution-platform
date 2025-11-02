@@ -53,6 +53,7 @@ func main() {
 	authHandler := handlers.NewAuthHandler(userRepo)
 	apiHandler := handlers.NewAPIHandler(apiRepo)
 	deployHandler := handlers.NewDeployHandler(apiRepo)
+	executeHandler := handlers.NewExecuteHandler(apiRepo)
 
 	// Setup router
 	log.Info("Setting up routes")
@@ -70,6 +71,9 @@ func main() {
 	router.HandleFunc("/api/v1/auth/reset-password", authHandler.ResetPassword).Methods("POST")
 	router.HandleFunc("/api/v1/marketplace/apis", apiHandler.GetPublicAPIs).Methods("GET")
 	router.HandleFunc("/api/v1/marketplace/apis/{id}", apiHandler.GetAPI).Methods("GET")
+	
+	// API Execution endpoint - allows invoking deployed APIs
+	router.PathPrefix("/execute/").HandlerFunc(executeHandler.ExecuteAPI).Methods("POST")
 
 	// Protected routes
 	protected := router.PathPrefix("/api/v1").Subrouter()
