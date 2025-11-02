@@ -65,6 +65,9 @@ func main() {
 	router.HandleFunc("/health", healthHandler).Methods("GET")
 	router.HandleFunc("/api/v1/auth/signup", authHandler.Signup).Methods("POST")
 	router.HandleFunc("/api/v1/auth/login", authHandler.Login).Methods("POST")
+	router.HandleFunc("/api/v1/auth/verify-email/{token}", authHandler.VerifyEmail).Methods("GET")
+	router.HandleFunc("/api/v1/auth/forgot-password", authHandler.ForgotPassword).Methods("POST")
+	router.HandleFunc("/api/v1/auth/reset-password", authHandler.ResetPassword).Methods("POST")
 	router.HandleFunc("/api/v1/marketplace/apis", apiHandler.GetPublicAPIs).Methods("GET")
 	router.HandleFunc("/api/v1/marketplace/apis/{id}", apiHandler.GetAPI).Methods("GET")
 
@@ -74,6 +77,7 @@ func main() {
 
 	// Auth routes
 	protected.HandleFunc("/auth/me", authHandler.Me).Methods("GET")
+	protected.HandleFunc("/auth/change-password", authHandler.ChangePassword).Methods("POST")
 
 	// API management routes
 	protected.HandleFunc("/apis", apiHandler.GetMyAPIs).Methods("GET")
