@@ -35,44 +35,84 @@ func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
 	user := &models.User{}
 	
 	query := `
-		SELECT id, email, password_hash, name, role, email_verified, verification_token,
-		       password_reset_token, password_reset_expires, created_at, updated_at
+		SELECT id, email, password_hash, name, role, 
+		       COALESCE(email_verified, false) as email_verified,
+		       verification_token, password_reset_token, password_reset_expires,
+		       created_at, updated_at
 		FROM users WHERE email = $1
 	`
 	
+	var verificationToken, resetToken sql.NullString
+	var resetExpires sql.NullTime
+	
 	err := r.db.QueryRow(query, email).Scan(
 		&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.Role,
-		&user.EmailVerified, &user.VerificationToken, &user.PasswordResetToken,
-		&user.PasswordResetExpires, &user.CreatedAt, &user.UpdatedAt,
+		&user.EmailVerified, &verificationToken, &resetToken,
+		&resetExpires, &user.CreatedAt, &user.UpdatedAt,
 	)
 	
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("user not found")
 	}
 	
-	return user, err
+	if err != nil {
+		return nil, err
+	}
+	
+	// Handle NULL values
+	if verificationToken.Valid {
+		user.VerificationToken = verificationToken.String
+	}
+	if resetToken.Valid {
+		user.PasswordResetToken = resetToken.String
+	}
+	if resetExpires.Valid {
+		user.PasswordResetExpires = &resetExpires.Time
+	}
+	
+	return user, nil
 }
 
 func (r *UserRepository) GetByID(id string) (*models.User, error) {
 	user := &models.User{}
 	
 	query := `
-		SELECT id, email, password_hash, name, role, email_verified, verification_token,
-		       password_reset_token, password_reset_expires, created_at, updated_at
+		SELECT id, email, password_hash, name, role,
+		       COALESCE(email_verified, false) as email_verified,
+		       verification_token, password_reset_token, password_reset_expires,
+		       created_at, updated_at
 		FROM users WHERE id = $1
 	`
 	
+	var verificationToken, resetToken sql.NullString
+	var resetExpires sql.NullTime
+	
 	err := r.db.QueryRow(query, id).Scan(
 		&user.ID, &user.Email, &user.PasswordHash, &user.Name, &user.Role,
-		&user.EmailVerified, &user.VerificationToken, &user.PasswordResetToken,
-		&user.PasswordResetExpires, &user.CreatedAt, &user.UpdatedAt,
+		&user.EmailVerified, &verificationToken, &resetToken,
+		&resetExpires, &user.CreatedAt, &user.UpdatedAt,
 	)
 	
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("user not found")
 	}
 	
-	return user, err
+	if err != nil {
+		return nil, err
+	}
+	
+	// Handle NULL values
+	if verificationToken.Valid {
+		user.VerificationToken = verificationToken.String
+	}
+	if resetToken.Valid {
+		user.PasswordResetToken = resetToken.String
+	}
+	if resetExpires.Valid {
+		user.PasswordResetExpires = &resetExpires.Time
+	}
+	
+	return user, nil
 }
 
 func (r *UserRepository) GetByVerificationToken(token string) (*models.User, error) {
