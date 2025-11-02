@@ -13,6 +13,7 @@ interface API {
   runtime: string;
   status: string;
   visibility: string;
+  code_path?: string;
   created_at: string;
 }
 
