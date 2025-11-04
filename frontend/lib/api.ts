@@ -121,6 +121,24 @@ class APIClient {
       method: 'POST',
     });
   }
+
+  // API Keys
+  async getAPIKeys() {
+    return this.request('/api/v1/api-keys');
+  }
+
+  async createAPIKey(data: { name: string; api_id?: string }) {
+    return this.request('/api/v1/api-keys', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deactivateAPIKey(id: string) {
+    return this.request(`/api/v1/api-keys/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const api = new APIClient();

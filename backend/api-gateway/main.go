@@ -47,6 +47,7 @@ func main() {
 	log.Info("Initializing repositories")
 	userRepo := repository.NewUserRepository(database.DB)
 	apiRepo := repository.NewAPIRepository(database.DB)
+	apiKeyRepo := repository.NewAPIKeyRepository(database.DB)
 
 	// Initialize handlers
 	log.Info("Initializing handlers")
@@ -54,6 +55,7 @@ func main() {
 	apiHandler := handlers.NewAPIHandler(apiRepo)
 	deployHandler := handlers.NewDeployHandler(apiRepo)
 	executeHandler := handlers.NewExecuteHandler(apiRepo)
+	apiKeyHandler := handlers.NewAPIKeyHandler(apiKeyRepo)
 
 	// Setup router
 	log.Info("Setting up routes")
@@ -95,6 +97,11 @@ func main() {
 	protected.HandleFunc("/apis/{id}/deploy", deployHandler.DeployAPI).Methods("POST")
 	protected.HandleFunc("/apis/{id}/stop", deployHandler.StopAPI).Methods("POST")
 	protected.HandleFunc("/apis/{id}/status", deployHandler.GetAPIStatus).Methods("GET")
+	
+	// API Key management routes
+	protected.HandleFunc("/api-keys", apiKeyHandler.GetMyAPIKeys).Methods("GET")
+	protected.HandleFunc("/api-keys", apiKeyHandler.CreateAPIKey).Methods("POST")
+	protected.HandleFunc("/api-keys/{id}", apiKeyHandler.DeactivateAPIKey).Methods("DELETE")
 
 	// CORS configuration
 	c := cors.New(cors.Options{

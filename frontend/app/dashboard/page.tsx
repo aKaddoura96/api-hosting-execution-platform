@@ -70,8 +70,11 @@ export default function DashboardPage() {
             </span>
           </Link>
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <Link href="/marketplace" className="hidden sm:inline text-gray-600 hover:text-gray-900">
+            <Link href="/marketplace" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
               Marketplace
+            </Link>
+            <Link href="/dashboard/api-keys" className="hidden sm:inline text-gray-600 hover:text-gray-900 font-medium">
+              🔑 API Keys
             </Link>
             <span className="hidden md:inline text-gray-600 text-sm">Hi, {user?.name}</span>
             <button
